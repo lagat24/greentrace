@@ -1,5 +1,5 @@
 // API configuration
-const API_BASE = ''; // Empty for same origin, or set to your backend URL
+const API_BASE = 'https://greentrace-t95w.onrender.com';
 
 // Global variables
 let map;
