@@ -1,0 +1,30 @@
+[
+  { 
+    "name": "Karura Forest, Nairobi",
+    "lat": -1.2544, 
+    "lng": 36.8367 },
+  { 
+    "name": "Ngong Hills, Kajiado", 
+    "lat": -1.3840, 
+    "lng": 36.6936 },
+  { 
+    "name": "Aberdare Range, Nyandarua", 
+    "lat": -0.4372, 
+    "lng": 36.7193 },
+  { 
+    "name": "Kakamega Forest, Kakamega", 
+    "lat": 0.2816, 
+    "lng": 34.7519 },
+  { 
+    "name": "Karachi (Example Community Spot)", 
+    "lat": -0.4167, 
+    "lng": 36.95 },
+  { 
+    "name": "Mt. Kenya Forest Edge", 
+    "lat": 0.1521, 
+    "lng": 37.3084 },
+  { 
+    "name": "Other (specify)", 
+    "lat": null, 
+    "lng": null }
+]

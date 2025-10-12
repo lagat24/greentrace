@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GreenTrace — Home</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS (for map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="../frontend/styles/style.css" />
+</head>
+<body>
+  <!-- NAV: shows brand (logo + text), links, auth area and dark mode toggle -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-left">
+      <!-- Logo image + site name: using inline img file in /assets/logo.svg -->
+      <a class="brand" aria-label="GreenTrace home">
+        <img src="../frontend/images/image.png" alt="GreenTrace logo" class="logo-img" />
+        <span >GreenTrace</span>
+      </a>
+      <p class="tagline">Track and Celebrate Tree Planting</p>
+    </div>
+
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="leaderboard.html" >Leaderboard</a>
+
+      <!-- Auth area is updated dynamically by script.js -->
+      <span id="nav-auth-area">
+        <a href="login.html" >Login</a>
+        <a href="signup.html" class="btn">Sign Up</a>
+      </span>
+
+      <!-- Dark mode toggle -->
+      <button id="darkModeToggle" class="dark-toggle" aria-pressed="false" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="container" role="main">
+    <!-- Map section -->
+    <section class="map-section card">
+      <h2>Planted Trees Map</h2>
+      <!-- Map container (Leaflet will render here) -->
+      <div id="map" class="map" aria-label="Map showing planted trees"></div>
+    </section>
+
+    <!-- Form section -->
+    <section class="form-section card">
+      <h2>Add a Tree 🌱</h2>
+
+      <!-- If user not logged in we show friendly prompt -->
+      <div id="login-prompt" class="callout hidden" role="status">
+        Please <a href="login.html">log in</a> or <a href="signup.html">sign up</a> to add a tree.
+      </div>
+
+      <!-- Add Tree Form -->
+      <form id="treeForm" class="tree-form" novalidate>
+        <!-- Tree name -->
+        <label>
+          Tree name
+          <input type="text" name="treeName" id="treeName" placeholder="e.g., Mugumo" required>
+        </label>
+
+        <!-- Planter name -->
+        <label>
+          Planter name
+          <input type="text" name="planterName" id="planterName" placeholder="Your full name" required>
+        </label>
+
+        <!-- Location selection (populated from locations.json) -->
+        <label>
+          Location (choose a named place)
+          <select id="locationSelect" required>
+            <option value="">Loading locations...</option>
+          </select>
+        </label>
+
+        <!-- Manual coordinates: only shown when user picks "Other" -->
+        <div id="manualCoords" class="hidden">
+          <label>
+            Latitude
+            <input type="number" step="any" id="latitude" placeholder="e.g., -1.2544">
+          </label>
+          <label>
+            Longitude
+            <input type="number" step="any" id="longitude" placeholder="e.g., 36.8367">
+          </label>
+        </div>
+
+        <!-- Description -->
+        <label>
+          Description (optional)
+          <textarea id="description" rows="3" placeholder="Why was this tree planted?"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button id="submitTreeBtn" class="btn primary">Add Tree 🌳</button>
+          <button id="center-my-trees" type="button" class="btn secondary">Center on trees</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Simple toast for messages -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <small>Powered by SDG 15 — Life on Land</small>
+  </footer>
+
+  <!-- Leaflet JS (map) -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- JS script (deferred) -->
+  <script src="../frontend/scripts/script.js" defer></script>
+</body>
+</html>
+
