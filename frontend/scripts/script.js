@@ -302,11 +302,11 @@ async function handleSignup(event) {
   try {
     const result = await apiFetch('/api/auth/signup', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ username, email, password })
     });
     
     if (result && result.token) {
-      setUserInfo(result.user || { name }, result.token);
+      setUserInfo(result.user || { name: username }, result.token);
       showToast('Account created successfully!');
       window.location.href = 'index.html';
     } else {
