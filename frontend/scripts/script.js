@@ -295,7 +295,7 @@ async function handleLogin(event) {
 async function handleSignup(event) {
   event.preventDefault();
   
-  const name = document.getElementById('signupName').value.trim();
+  const username = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
   
