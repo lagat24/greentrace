@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const conn = require('../db');
+const conn = require('../db');  // You imported 'conn' here
 const router = express.Router();
 
 const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10');
@@ -16,13 +16,14 @@ router.post('/signup', async (req, res) => {
   try {
     const hashed = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // INSERT uses 'username' column (matches your DB)
+    // INSERT uses 'conn' (correct)
     await conn.execute(
       'INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, NOW())',
       [username, email, hashed]
     );
 
-    const [rows] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
+    // FIX: Use 'conn' instead of 'db'
+    const [rows] = await conn.execute('SELECT * FROM users WHERE username = ?', [username]);
     const user = rows[0];
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '30d' });
