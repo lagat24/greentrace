@@ -22,10 +22,7 @@ router.post('/signup', async (req, res) => {
       [username, email, hashed]
     );
 
-    const [rows] = await conn.execute(
-      'SELECT id, username, email FROM users WHERE email = ?',
-      [email]
-    );
+    const [rows] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
     const user = rows[0];
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '30d' });
