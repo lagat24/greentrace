@@ -14,7 +14,8 @@ Users can sign up, plant virtual or real trees, upload pictures, and track their
 
 ### 🌳 Tree Upload & Picture Submission
 - Record each tree planted.  
-- Upload a photo for verification.  
+- Upload a photo for verification.
+- Ai photo verification.  
 - Include location details (latitude & longitude) for mapping.
 
 ### 🏆 Leaderboard
@@ -26,6 +27,11 @@ Users can sign up, plant virtual or real trees, upload pictures, and track their
 - Visual progress tracking for engagement and accountability.
 
 ---
+
+## Ways we use AI
+-GreenTrace uses artificial intelligence to verify tree planting by analyzing the photos users upload. The AI examines image details such as soil disturbance, leaf patterns, and background consistency to confirm authenticity. This ensures users genuinely plant trees, enhancing transparency, credibility, and trust within the GreenTrace sustainability community.
+
+___
 
 ## 🌿 Benefits
 - **Environmental Impact:** Promotes real-world tree planting and supports climate action.  
