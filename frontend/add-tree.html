@@ -94,7 +94,7 @@
 
     <div class="nav-links">
       <a href="dashboard.html">Dashboard</a> 
-      <a href="mytrees.html" aria-current="page" style="color:var(--accent); font-weight:bold;">My Trees</a>
+      <a href="add-tree.html" aria-current="page" style="color:var(--accent); font-weight:bold;">My Trees</a>
       <a href="ai-scout.html">AI Scout</a>
       <a href="leaderboard.html">Leaderboard</a>
       <a href="#" onclick="logout()">Logout</a>
@@ -163,15 +163,14 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <script>
-  let map, trees = [], aiModel = null;
+  let map, trees = [], aiModel = null, kenyaLocations = [];
 
   document.addEventListener("DOMContentLoaded", async () => {
-    // Dark mode initialization 🌙
+    // Dark mode 🌙
     const darkModeToggle = document.getElementById("darkModeToggle");
     const theme = localStorage.getItem("theme") || "light";
     document.body.setAttribute("data-theme", theme);
     darkModeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
-
     darkModeToggle.addEventListener("click", () => {
       const newTheme = document.body.getAttribute("data-theme") === "light" ? "dark" : "light";
       document.body.setAttribute("data-theme", newTheme);
@@ -179,9 +178,10 @@
       darkModeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
     });
 
-    // Map setup
-    map = L.map("map").setView([-1.286389, 36.817223], 8);
+    // Initialize map
+    map = L.map("map").setView([-1.286389, 36.817223], 7);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+    setTimeout(() => map.invalidateSize(), 500);
 
     const toast = document.getElementById("toast");
     const gallery = document.getElementById("treeGallery");
@@ -191,19 +191,27 @@
     const progressFill = document.getElementById("progressFill");
     const verificationStatus = document.getElementById("verificationStatus");
 
+    // Load Kenya locations
+    try {
+      const res = await fetch("../frontend/location.json");
+      kenyaLocations = await res.json();
+      locationSelect.innerHTML = kenyaLocations.map(l => `<option value="${l.name}">${l.name}</option>`).join("");
+    } catch {
+      locationSelect.innerHTML = `<option value="Nairobi">Nairobi</option>`;
+    }
+
+    // Load AI model
     try {
       showToast("Loading AI model...", "info");
-      aiModel = await tf.loadLayersModel("/models/tree-model/model.json");
+      aiModel = await tf.loadLayersModel("../frontend/models/tree-model/model.json");
       showToast("AI model ready ✅", "success");
     } catch {
       aiModel = null;
-      showToast("Using fallback verification", "warning");
+      showToast("Using fallback AI verification", "warning");
     }
 
-    const locations = ["Nairobi", "Nyeri", "Embu", "Kitui", "Mombasa", "Kisumu", "Nakuru", "Other"];
-    locationSelect.innerHTML = locations.map(loc => `<option value="${loc}">${loc}</option>`).join("");
-
-    trees = JSON.parse(localStorage.getItem("trees")) || [];
+    const storageKey = "greentrace_trees";
+    trees = JSON.parse(localStorage.getItem(storageKey)) || [];
     trees.forEach(renderTree);
     updateMap();
 
@@ -216,12 +224,10 @@
       const location = locationSelect.value;
       const description = document.getElementById("description").value.trim();
       const imageFile = document.getElementById("treeImage").files[0];
-
       if (!imageFile) return showToast("Please upload a tree image!", "error");
 
       const submitBtn = document.getElementById("submitTreeBtn");
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Verifying...";
+      submitBtn.disabled = true; submitBtn.textContent = "Verifying...";
       verificationProgress.classList.remove("hidden");
 
       try {
@@ -232,21 +238,13 @@
         const result = aiModel ? await verifyWithTensorFlow(imageBase64) : await basicImageAnalysis(imageBase64);
 
         if (result.verified) {
-          const newTree = {
-            id: Date.now(),
-            treeName,
-            planterName,
-            location,
-            description,
-            lat: -1.29 + Math.random() * 0.2,
-            lon: 36.82 + Math.random() * 0.2,
-            image: imageBase64,
-            verified: true,
-            confidence: result.confidence,
-            plantedAt: new Date()
-          };
+          const locationData = kenyaLocations.find(l => l.name === location);
+          const lat = locationData?.lat || -1.29 + Math.random() * 0.2;
+          const lon = locationData?.lng || 36.82 + Math.random() * 0.2;
+
+          const newTree = { id: Date.now(), treeName, planterName, location, description, lat, lon, image: imageBase64, verified: true, confidence: result.confidence, plantedAt: new Date() };
           trees.push(newTree);
-          localStorage.setItem("trees", JSON.stringify(trees));
+          localStorage.setItem(storageKey, JSON.stringify(trees));
           renderTree(newTree);
           updateMap();
           form.reset();
@@ -271,13 +269,9 @@
         <h3>${escapeHtml(t.treeName)}</h3>
         <p><b>Planter:</b> ${escapeHtml(t.planterName)}</p>
         <p>${escapeHtml(t.location)}</p>
-        <p class="${t.verified ? "verified" : "not-verified"}">
-          ${t.verified ? "✅ AI Verified" : "❌ Unverified"}
-        </p>
+        <p class="${t.verified ? "verified" : "not-verified"}">${t.verified ? "✅ AI Verified" : "❌ Unverified"}</p>
         <div class="confidence">${(t.confidence * 100).toFixed(1)}% confidence</div>
-        <button class="delete-btn" data-id="${t.id}">
-          <i class="fas fa-trash"></i> Delete
-        </button>
+        <button class="delete-btn" data-id="${t.id}"><i class="fas fa-trash"></i> Delete</button>
       `;
       gallery.appendChild(card);
       card.querySelector(".delete-btn").addEventListener("click", () => deleteTree(t.id));
@@ -286,7 +280,7 @@
     function deleteTree(id) {
       if (!confirm("Are you sure you want to delete this tree?")) return;
       trees = trees.filter(t => t.id !== id);
-      localStorage.setItem("trees", JSON.stringify(trees));
+      localStorage.setItem(storageKey, JSON.stringify(trees));
       document.getElementById("treeGallery").innerHTML = "";
       trees.forEach(renderTree);
       updateMap();
@@ -322,11 +316,7 @@
             if (g1 > r + 20 && g1 > b + 20 && g1 > 60) g++;
           }
           const conf = Math.min((g / (d.length / 4)) / 0.3, 0.95);
-          res({
-            verified: conf > 0.4,
-            confidence: conf,
-            message: conf > 0.4 ? `Tree-like features detected (${(conf * 100).toFixed(1)}%)` : `Low confidence (${(conf * 100).toFixed(1)}%)`
-          });
+          res({ verified: conf > 0.4, confidence: conf, message: conf > 0.4 ? `Tree-like features detected (${(conf * 100).toFixed(1)}%)` : `Low confidence (${(conf * 100).toFixed(1)}%)` });
         };
       });
     }
@@ -335,8 +325,7 @@
     function toBase64(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); }); }
     function centerOnTrees() {
       const group = L.featureGroup(trees.filter(t => t.verified).map(t => L.marker([t.lat, t.lon])));
-      if (trees.length) map.fitBounds(group.getBounds());
-      else showToast("No trees to center", "warning");
+      if (trees.length) map.fitBounds(group.getBounds()); else showToast("No trees to center", "warning");
     }
     function updateMap() {
       map.eachLayer(l => { if (l instanceof L.Marker) map.removeLayer(l); });
