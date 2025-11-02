@@ -5,42 +5,514 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GreenTrace — Track and Celebrate Tree Planting</title>
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../frontend/images/image.png">
+
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Landing page CSS -->
-  <link rel="stylesheet" href="../frontend/styles/style.css" />
+  <style>
+    /* --- THEME VARIABLES --- */
+    :root {
+      --primary: #2e7d32;
+      --accent: #4caf50;
+      --light: #f4fff4;
+      --card: #ffffff;
+      --text: #163d2c;
+      --muted: #3e6e55;
+      --border: #e8f5e9;
+      --radius: 12px;
+      --shadow: 0 8px 25px rgba(46, 125, 50, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] {
+      --primary: #81c784;
+      --accent: #66bb6a;
+      --light: #121212;
+      --card: #1e1e1e;
+      --text: #e8f5e9;
+      --muted: #a8d5a5;
+      --border: #2d4a2d;
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* --- BASIC RESET --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: var(--light);
+      color: var(--text);
+      scroll-behavior: smooth;
+      line-height: 1.6;
+    }
+
+    /* --- NAVBAR --- */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      background: transparent;
+    }
+
+    .nav-scrolled {
+      background: rgba(244, 255, 244, 0.95);
+      box-shadow: 0 4px 25px rgba(46, 125, 50, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    [data-theme="dark"] .nav-scrolled {
+      background: rgba(18, 18, 18, 0.95);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .logo-img {
+      height: 45px;
+      width: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+      border: 2px solid var(--primary);
+      transition: var(--transition);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 0.8rem;
+      transition: var(--transition);
+    }
+
+    .brand:hover .logo-img {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
+    }
+
+    .brand-text {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--primary);
+      transition: var(--transition);
+    }
+
+    .brand:hover .brand-text {
+      color: var(--accent);
+    }
+
+    .tagline {
+      font-size: 0.9rem;
+      margin-left: 1rem;
+      color: var(--accent);
+      font-style: italic;
+      border-left: 2px solid var(--border);
+      padding-left: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 0.6rem 1.2rem;
+      border-radius: 25px;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+      background: rgba(76, 175, 80, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Active link styling */
+    .nav-links a[style*="color:var(--accent)"] {
+      color: var(--accent) !important;
+      font-weight: 700;
+      background: rgba(76, 175, 80, 0.15);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    }
+
+    .nav-links a[style*="color:var(--accent)"]::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn.primary:hover {
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn.secondary:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .dark-toggle {
+      background: rgba(76, 175, 80, 0.1);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--text);
+      transition: var(--transition);
+      padding: 0.6rem;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dark-toggle:hover {
+      transform: rotate(15deg);
+      background: rgba(76, 175, 80, 0.2);
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    }
+
+    /* --- MOBILE MENU --- */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--primary);
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      transition: var(--transition);
+    }
+
+    .menu-toggle:hover {
+      background: rgba(76, 175, 80, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: var(--card);
+        text-align: center;
+        padding: 1rem 0;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        box-shadow: var(--shadow);
+        border-top: 1px solid var(--border);
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav {
+        flex-wrap: wrap;
+        padding: 1rem;
+      }
+
+      .tagline {
+        display: none;
+      }
+
+      .nav-links a {
+        padding: 1rem 1.5rem;
+        width: 100%;
+        border-radius: 0;
+      }
+
+      .nav-links a[style*="color:var(--accent)"]::after {
+        display: none;
+      }
+    }
+
+    /* --- HERO SECTION --- */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M12.5 0L15 6 21 6 16 10 18 16 12.5 13 7 16 9 10 4 6 10 6Z" fill="rgba(76,175,80,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .accent-text {
+      color: var(--accent);
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* --- SECTION BASE --- */
+    .section {
+      padding: 3rem 2rem; /* Reduced from 5rem to 3rem */
+      text-align: center;
+    }
+
+    /* Reduced spacing specifically between About and How It Works */
+    #about {
+      padding-bottom: 1.5rem; /* Reduced bottom padding */
+    }
+
+    #how-it-works {
+      padding-top: 1.5rem; /* Reduced top padding */
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 2rem; /* Reduced from 3rem */
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* --- GRIDS --- */
+    .features-grid, .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem; /* Reduced from 3rem */
+    }
+
+    .feature-card, .benefit-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 2rem 1.5rem; /* Reduced padding */
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .feature-card:hover, .benefit-card:hover {
+      transform: translateY(-8px); /* Reduced hover effect */
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    .feature-icon, .benefit-icon {
+      font-size: 2.5rem; /* Slightly smaller icons */
+      margin-bottom: 1rem; /* Reduced margin */
+      display: block;
+    }
+
+    .feature-card h3, .benefit-card h3 {
+      font-size: 1.3rem; /* Slightly smaller heading */
+      margin-bottom: 0.8rem; /* Reduced margin */
+      color: var(--primary);
+    }
+
+    /* --- CTA --- */
+    .cta {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: white;
+      padding: 4rem 2rem; /* Reduced from 5rem */
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta .btn {
+      background: white;
+      color: var(--primary);
+      font-size: 1.1rem;
+      padding: 1rem 2rem;
+    }
+
+    .cta .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+    }
+
+    /* --- FOOTER --- */
+    .footer {
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      font-size: 1rem;
+    }
+
+    /* --- SCROLL ANIMATION --- */
+    .slide-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s ease;
+    }
+
+    .slide-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
+
 <body>
   <!-- Navigation -->
   <nav class="nav" aria-label="Main navigation">
     <div class="nav-left">
-      <a class="brand" aria-label="GreenTrace home">
+      <a href="index.html" class="brand" aria-label="GreenTrace home">
         <img src="../frontend/images/image.png" alt="GreenTrace logo" class="logo-img" />
         <span class="brand-text">GreenTrace</span>
       </a>
       <p class="tagline">Track and Celebrate Tree Planting</p>
     </div>
 
+    <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
     <div class="nav-links">
-      
       <a href="index.html">Home</a>
       <a href="#about">About</a>
-      <a href="#how-it-works">How it works</a>
+      <a href="#how-it-works">How it Works</a>
       <a href="login.html">Login</a>
-      <a href="sub.html" style="color:var(--accent); font-weight:bold;">Subscription Plans</a>
-      <a href="signup.html" class="btn">Sign Up</a>
-      <!-- Dark mode toggle -->
-      <button id="darkModeToggle" class="dark-toggle" aria-pressed="false" aria-label="Toggle dark mode">🌙</button>
+      <a href="sub.html" style="color:var(--accent); font-weight:bold;">Subscription</a>
+      <a href="signup.html" class="btn primary">Sign Up</a>
+      <button id="darkModeToggle" class="dark-toggle" aria-label="Toggle dark mode">🌙</button>
     </div>
   </nav>
 
   <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <div class="hero-content">
+      <div class="hero-content slide-up">
         <h1>Make Environmental Action <span class="accent-text">Fun & Rewarding</span></h1>
-        <p>GreenTrace is an interactive platform that promotes tree planting through friendly competitions. Track your progress, compete on the leaderboard, and make a real impact on our planet.</p>
+        <p>GreenTrace promotes tree planting through friendly competitions. Track your progress, compete on leaderboards, and make a real impact on our planet.</p>
         <div class="hero-buttons">
           <a href="signup.html" class="btn primary">Get Started</a>
           <a href="#how-it-works" class="btn secondary">How It Works</a>
@@ -50,176 +522,105 @@
   </section>
 
   <!-- About Section -->
-<section id ="about" class="about">
-  <div class="container">
-    <h2>About GreenTrace 🌎</h2>
-    <p>
-      GreenTrace was inspired by the idea that <strong>every tree tells a story</strong>. Our platform helps document 
-      these stories — from community reforestation projects to school tree drives and corporate sustainability goals.
-    </p>
-    <p>
-      The initiative aligns with the United Nations Sustainable Development Goals (SDG 13 and SDG 15) by promoting 
-      climate action and life on land. Each registered tree contributes to a larger global count and helps visualize 
-      progress toward reforestation and environmental restoration.
-    </p>
-    <p>
-      GreenTrace is more than just a tracker — it's a movement. It's built for anyone who believes in the power of 
-      small actions creating a big difference. Every seed planted is a step toward a cleaner, greener, and healthier planet.
-    </p>
-  </div>
-</section>
-  <!-- Features Section -->
-  <section class="section">
+  <section id="about" class="section slide-up">
     <div class="container">
-      <h2 class="section-title">Why Choose GreenTrace?</h2>
-      <p class="section-subtitle">Our platform combines technology, community, and environmental action to create meaningful change.</p>
-      
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🌳</div>
-          <h3>Tree Tracking</h3>
-          <p>Record each tree you plant with location details and photos. Watch your forest grow over time.</p>
-        </div>
-        
-        <div class="feature-card">
-          <div class="feature-icon">🏆</div>
-          <h3>Leaderboard</h3>
-          <p>Compete with friends and other eco-warriors. See who's planting the most trees in your community.</p>
-        </div>
-        
-        <div class="feature-card">
-          <div class="feature-icon">🤖</div>
-          <h3>AI Verification</h3>
-          <p>Our AI analyzes photos to verify tree planting, ensuring transparency and credibility.</p>
-        </div>
-        
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3>Progress Dashboard</h3>
-          <p>Visualize your environmental impact with detailed statistics and progress tracking.</p>
-        </div>
-      </div>
+      <h2 class="section-title">About GreenTrace 🌎</h2>
+      <p class="section-subtitle">GreenTrace documents every tree's story — from community projects to corporate sustainability goals. Each planted tree helps visualize global reforestation progress.</p>
     </div>
   </section>
 
   <!-- How It Works Section -->
-  <section id="how-it-works" class="section steps-section">
+  <section id="how-it-works" class="section slide-up">
     <div class="container">
       <h2 class="section-title">How GreenTrace Works</h2>
       <p class="section-subtitle">Join thousands of users making a difference in just a few simple steps</p>
-      
-      <div class="steps">
-        <div class="step">
-          <div class="step-number">1</div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🌱</div>
           <h3>Sign Up</h3>
-          <p>Create your free account and set up your profile</p>
+          <p>Create your free account and set up your profile in under 2 minutes</p>
         </div>
-        
-        <div class="step">
-          <div class="step-number">2</div>
+        <div class="feature-card">
+          <div class="feature-icon">🌳</div>
           <h3>Plant Trees</h3>
-          <p>Plant a tree in real life and record it in the app with photos</p>
+          <p>Plant a tree in real life and record it in the app with photos and location data</p>
         </div>
-        
-        <div class="step">
-          <div class="step-number">3</div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
           <h3>AI Verification</h3>
-          <p>Our AI verifies your planting through photo analysis</p>
+          <p>Our AI verifies your planting through photo analysis within minutes</p>
         </div>
-        
-        <div class="step">
-          <div class="step-number">4</div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
           <h3>Track Progress</h3>
-          <p>Watch your impact grow and compete on the leaderboard</p>
+          <p>Watch your impact grow, earn badges, and compete on the leaderboard</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Benefits Section -->
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title">Benefits of Joining GreenTrace</h2>
-      <p class="section-subtitle">More than just an app - it's a movement towards a greener planet</p>
-      
-      <div class="benefits-grid">
-        <div class="benefit-card">
-          <div class="benefit-icon">🌍</div>
-          <h3>Environmental Impact</h3>
-          <p>Directly contribute to reforestation and combat climate change</p>
-        </div>
-        
-        <div class="benefit-card">
-          <div class="benefit-icon">🎮</div>
-          <h3>Gamification</h3>
-          <p>Earn badges, climb leaderboards, and make sustainability fun</p>
-        </div>
-        
-        <div class="benefit-card">
-          <div class="benefit-icon">👥</div>
-          <h3>Community</h3>
-          <p>Connect with like-minded individuals and organizations</p>
-        </div>
-        
-        <div class="benefit-card">
-          <div class="benefit-icon">🔍</div>
-          <h3>Transparency</h3>
-          <p>Photo verification ensures genuine contributions</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="cta">
+  <!-- CTA -->
+  <section class="cta slide-up">
     <div class="container">
       <h2>Ready to Make a Difference?</h2>
-      <p>Join GreenTrace today and start your journey towards a greener planet. Every tree counts!</p>
-      <a href="signup.html" class="btn primary">Sign Up Now</a>
+      <p>Join thousands of eco-warriors on GreenTrace today and start your journey towards a greener planet. Every tree counts!</p>
+      <a href="signup.html" class="btn">Start Planting Now</a>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <medium>GreenTrace — For a greener tomorrow</medium>
+      <medium>GreenTrace — For a greener tomorrow 🌿</medium>
     </div>
   </footer>
 
-  <!-- Theme Toggle Script -->
+  <!-- JavaScript -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
       const darkModeToggle = document.getElementById('darkModeToggle');
-      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      // Check for saved theme or prefered scheme
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
       const currentTheme = localStorage.getItem('theme');
-      if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+      const navbar = document.querySelector('.nav');
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+      const animatedElements = document.querySelectorAll('.slide-up');
+
+      // Theme setup
+      if (currentTheme === 'dark' || (!currentTheme && prefersDark.matches)) {
         document.body.setAttribute('data-theme', 'dark');
         darkModeToggle.textContent = '☀️';
-        darkModeToggle.setAttribute('aria-pressed', 'true');
       } else {
         document.body.setAttribute('data-theme', 'light');
         darkModeToggle.textContent = '🌙';
-        darkModeToggle.setAttribute('aria-pressed', 'false');
       }
-      
-      // Toggle theme when button is clicked
-      darkModeToggle.addEventListener('click', function() {
-        let theme = 'light';
-        if (document.body.getAttribute('data-theme') === 'light') {
-          theme = 'dark';
-          darkModeToggle.textContent = '☀️';
-          darkModeToggle.setAttribute('aria-pressed', 'true');
-        } else {
-          theme = 'light';
-          darkModeToggle.textContent = '🌙';
-          darkModeToggle.setAttribute('aria-pressed', 'false');
-        }
-        
+
+      darkModeToggle.addEventListener('click', () => {
+        const theme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         document.body.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
+        darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
       });
+
+      // Navbar scroll effect
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) navbar.classList.add('nav-scrolled');
+        else navbar.classList.remove('nav-scrolled');
+      });
+
+      // Mobile menu
+      menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+      });
+
+      // Scroll animations
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      }, { threshold: 0.2 });
+
+      animatedElements.forEach(el => observer.observe(el));
     });
   </script>
 </body>
