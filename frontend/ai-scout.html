@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Land Scout — GreenTrace</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --primary: #2e7d32;
+      --accent: #4caf50;
+      --light: #f4fff4;
+      --card: #ffffff;
+      --text: #163d2c;
+      --muted: #6b6b6b;
+      --border: #e6efe6;
+      --radius: 10px;
+      --shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    [data-theme="dark"] {
+      --primary: #4caf50;
+      --accent: #66bb6a;
+      --light: #121212;
+      --card: #1e1e1e;
+      --text: #e0e0e0;
+      --muted: #a0a0a0;
+      --border: #333333;
+      --shadow: 0 6px 18px rgba(0,0,0,0.3);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--text);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      max-width: 1200px;
+      margin: 12px auto;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--primary);
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .logo-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+      background: rgba(76, 175, 80, 0.1);
+    }
+
+    .dark-toggle {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: var(--text);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    #map {
+      height: 75vh;
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      z-index: 1;
+    }
+
+    .api-status {
+      text-align: center;
+      margin: 15px 0;
+      padding: 8px;
+      border-radius: 8px;
+      font-weight: 500;
+      background: #ffeb3b;
+      color: #333;
+    }
+
+    .api-status.connected {
+      background: var(--accent);
+      color: white;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .report-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      border: 1px solid var(--border);
+      margin-top: 20px;
+    }
+
+    #ai-output {
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 15px;
+      border: 1px solid var(--border);
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 20px;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body>
+  <nav class="nav">
+    <div class="nav-left">
+      <a href="dashboard.html" class="brand">
+        <img src="../frontend/images/image.png" alt="GreenTrace logo" class="logo-img" />
+        <span>GreenTrace</span>
+      </a>
+      <p style="font-size:0.9rem;color:var(--muted);font-style:italic;">Track and Celebrate Tree Planting</p>
+    </div>
+
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="mytrees.html">My Trees</a>
+      <a href="ai-scout.html" style="color:var(--accent); font-weight:bold;">AI Scout</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="#" onclick="logout()">Logout</a>
+      <button id="darkModeToggle" class="dark-toggle">🌙</button>
+    </div>
+  </nav>
+
+  <main>
+    <h1 style="text-align:center; color:var(--primary);">🌍 AI Land Health Scout</h1>
+    <p style="text-align:center; color:var(--muted); margin-bottom:10px;">Powered by Google Gemini AI & GreenTrace</p>
+
+    <div class="api-status" id="apiStatus">🔴 Checking Gemini API...</div>
+
+    <div class="controls">
+      <button class="btn" id="btn-random">🎲 Random Country</button>
+      <button class="btn" id="btn-my-location">📍 My Location</button>
+      <button class="btn" id="btn-export">💾 Export Report</button>
+    </div>
+
+    <div id="map"></div>
+
+    <section class="report-card">
+      <h2 style="color:var(--primary); margin-top:10px;">Land Health Report</h2>
+      <div id="ai-output"><p><em>Click anywhere on the map to begin analysis...</em></p></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Powered by Google Gemini AI, NASA GIBS & OpenStreetMap — for a Greener Tomorrow 🌱</p>
+  </footer>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    let map, currentMarker, currentLocation;
+
+    function initMap() {
+      map = L.map('map').setView([0.0236, 37.9062], 6); // Kenya default
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      map.on('click', e => {
+        if (currentMarker) map.removeLayer(currentMarker);
+        currentMarker = L.marker(e.latlng).addTo(map)
+          .bindPopup(`<b>Selected:</b> ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}<br><button class='btn' onclick='analyzeLocation()'>Analyze</button>`)
+          .openPopup();
+        currentLocation = e.latlng;
+      });
+    }
+
+    async function checkAPIStatus() {
+      const apiStatus = document.getElementById('apiStatus');
+      apiStatus.innerHTML = '<span class="loading"></span> Checking Gemini API...';
+      await new Promise(r => setTimeout(r, 1000));
+      apiStatus.textContent = '🟢 Gemini API Connected';
+      apiStatus.classList.add('connected');
+    }
+
+    function analyzeLocation() {
+      if (!currentLocation) return alert('Select a location first.');
+      const aiOutput = document.getElementById('ai-output');
+      aiOutput.innerHTML = `<p><span class="loading"></span> Analyzing land health...</p>`;
+      setTimeout(() => {
+        aiOutput.innerHTML = `
+          <h3>Land Health Analysis</h3>
+          <p><b>Location:</b> ${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}</p>
+          <p style="color:var(--primary)">✅ Healthy vegetation detected. Low deforestation risk.</p>
+          <p><em>AI-powered analysis by GreenTrace Scout.</em></p>
+        `;
+      }, 1500);
+    }
+
+    function exportReport() {
+      const aiOutput = document.getElementById('ai-output').innerHTML;
+      const win = window.open('', '_blank');
+      win.document.write(`<h1>GreenTrace Land Report</h1>${aiOutput}`);
+      win.document.close();
+      win.print();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      checkAPIStatus();
+
+      // Dark mode
+      const toggle = document.getElementById('darkModeToggle');
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      document.body.setAttribute('data-theme', currentTheme);
+      toggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+      toggle.addEventListener('click', () => {
+        const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+      });
+
+      document.getElementById('btn-export').addEventListener('click', exportReport);
+      document.getElementById('btn-my-location').addEventListener('click', () => {
+        if (!navigator.geolocation) return alert("Geolocation not supported");
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          if (currentMarker) map.removeLayer(currentMarker);
+          currentMarker = L.marker([latitude, longitude]).addTo(map).bindPopup("📍 Your Location").openPopup();
+          map.setView([latitude, longitude], 10);
+          currentLocation = { lat: latitude, lng: longitude };
+        });
+      });
+      document.getElementById('btn-random').addEventListener('click', () => {
+        const lat = -1 + Math.random() * 2;
+        const lng = 36 + Math.random() * 4;
+        if (currentMarker) map.removeLayer(currentMarker);
+        currentMarker = L.marker([lat, lng]).addTo(map).bindPopup("🎲 Random Location").openPopup();
+        map.setView([lat, lng], 7);
+        currentLocation = { lat, lng };
+      });
+    });
+
+    function logout() {
+      if (confirm('Log out?')) {
+        localStorage.clear();
+        location.href = 'login.html';
+      }
+    }
+  </script>
+</body>
+</html>

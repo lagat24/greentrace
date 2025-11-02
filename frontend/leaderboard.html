@@ -5,52 +5,133 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GreenTrace — Leaderboard</title>
 
-    <!-- Google Font -->
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
   <!-- App styles -->
-  <link rel="stylesheet" href="../styles/style.css" />
+  <link rel="stylesheet" href="../frontend/styles/style.css" />
+
+  <style>
+    .leaderboard-section {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-top: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .leaderboard {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .leaderboard-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .leaderboard-entry:hover {
+      background: rgba(76, 175, 80, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .rank {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--primary);
+      width: 40px;
+      text-align: center;
+    }
+
+    .leader-info {
+      flex: 1;
+      margin-left: 10px;
+    }
+
+    .leader-info h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .leader-info p {
+      margin: 2px 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .score {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    .medal {
+      font-size: 1.5rem;
+    }
+
+    .muted {
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+    }
+  </style>
 </head>
 
-  <!--Body-->
 <body>
-  <!-- NAV: shows brand (logo + text), links, auth area and dark mode toggle -->
+  <!-- NAV -->
   <nav class="nav" aria-label="Main navigation">
     <div class="nav-left">
-      <!-- Logo image + site name: -->
-      <a class="brand" aria-label="GreenTrace home">
-        <img src="../images/image.png" alt="GreenTrace logo" class="logo-img" />
-        <span >GreenTrace</span>
+      <a class="brand" href="index.html" aria-label="GreenTrace home">
+        <img src="../frontend/images/image.png" alt="GreenTrace logo" class="logo-img" />
+        <span>GreenTrace</span>
       </a>
       <p class="tagline">Track and Celebrate Tree Planting</p>
     </div>
 
     <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="leaderboard.html" >Leaderboard</a>
-
-      <!-- Auth area is updated dynamically by script.js -->
-      <span id="nav-auth-area">
-        <a href="login.html" >Login</a>
-        <a href="signup.html" class="btn">Sign Up</a>
-      </span>
-
-      <!-- Dark mode toggle -->
-      <button id="darkModeToggle" class="dark-toggle" aria-pressed="false" aria-label="Toggle dark mode">🌙</button>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="mytrees.html">My Trees</a>
+      <a href="ai-scout.html">AI Scout</a>
+      <a href="leaderboard.html" style="color:var(--accent); font-weight:bold;">Leaderboard</a>
+      <a href="#" onclick="logout()">Logout</a>
+      <button id="darkModeToggle" class="dark-toggle" aria-label="Toggle dark mode">🌙</button>
     </div>
   </nav>
 
-
+  <!-- MAIN -->
   <main class="container">
     <section class="leaderboard-section">
       <h2>Leaderboard 🏆</h2>
       <div id="leaderboard" class="leaderboard">
-        <!-- Leaderboard entries inserted by script.js -->
         <p class="muted">Loading leaderboard...</p>
       </div>
 
-      <div class="actions" style="margin-top:12px;">
-        <a href="index.html" class="btn">Back to Home</a>
+      <div class="actions" style="margin-top:12px; text-align:center;">
+        <a href="dashboard.html" class="btn">Back to Dashboard</a>
       </div>
     </section>
   </main>
@@ -59,6 +140,75 @@
     <small>Keep planting for a greener tomorrow 🌍</small>
   </footer>
 
-  <script src="../scripts/script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const darkModeToggle = document.getElementById("darkModeToggle");
+      const theme = localStorage.getItem("theme") || "light";
+      document.body.setAttribute("data-theme", theme);
+      darkModeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+      darkModeToggle.addEventListener("click", () => {
+        const newTheme = document.body.getAttribute("data-theme") === "light" ? "dark" : "light";
+        document.body.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        darkModeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+      });
+
+      const leaderboard = document.getElementById("leaderboard");
+      const trees = JSON.parse(localStorage.getItem("trees")) || [];
+
+      // Group trees by planter
+      const userStats = {};
+      trees.forEach(tree => {
+        const name = tree.planterName || "Anonymous";
+        if (!userStats[name]) {
+          userStats[name] = { count: 0, species: new Set() };
+        }
+        userStats[name].count++;
+        userStats[name].species.add(tree.treeName);
+      });
+
+      // Convert to array & sort by count
+      const sorted = Object.entries(userStats)
+        .map(([name, data]) => ({
+          name,
+          count: data.count,
+          speciesCount: data.species.size
+        }))
+        .sort((a, b) => b.count - a.count);
+
+      // If no data
+      if (sorted.length === 0) {
+        leaderboard.innerHTML = `<p class="muted">No tree planting data available yet.</p>`;
+        return;
+      }
+
+      leaderboard.innerHTML = "";
+      sorted.forEach((user, index) => {
+        let medal = "";
+        if (index === 0) medal = "🥇";
+        else if (index === 1) medal = "🥈";
+        else if (index === 2) medal = "🥉";
+
+        const entry = document.createElement("div");
+        entry.className = "leaderboard-entry";
+        entry.innerHTML = `
+          <div class="rank">${index + 1}</div>
+          <div class="leader-info">
+            <h3>${user.name} ${medal ? `<span class="medal">${medal}</span>` : ""}</h3>
+            <p>${user.speciesCount} species planted</p>
+          </div>
+          <div class="score">${user.count} 🌳</div>
+        `;
+        leaderboard.appendChild(entry);
+      });
+    });
+
+    function logout() {
+      if (confirm("Are you sure you want to log out?")) {
+        localStorage.clear();
+        location.href = "login.html";
+      }
+    }
+  </script>
 </body>
 </html>

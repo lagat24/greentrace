@@ -5,231 +5,415 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GreenTrace — Subscriptions</title>
   <meta name="description" content="GreenTrace premium subscriptions — plant trees, compete, and unlock premium features."/>
+  
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root{
-      --bg:#0b3a2b;         /* very dark green */
-      --panel:#0f523f;      /* slightly lighter panel */
-      --accent:#7bd389;     /* bright green accent */
-      --muted:#c3e9d0;      /* muted light green */
-      --glass: rgba(255,255,255,0.04);
-      --card-shadow: 0 8px 24px rgba(4,25,18,0.6);
-      --radius:12px;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color-scheme: dark;
+    :root {
+      /* Light theme colors */
+      --primary: #2e7d32;        
+      --accent: #4caf50;        
+      --light: #f4fff4; 
+      --card: #ffffff;        
+      --text: #163d2c;    
+      --muted: #6b6b6b;   
+      --border: #e6efe6;    
+      --radius: 10px;
+      --max-width: 1200px;
+      --shadow: 0 6px 18px rgba(0,0,0,0.06);
     }
 
-    html,body{
-      height:100%;
-      margin:0;
-      background: linear-gradient(180deg, var(--bg) 0%, #063022 100%);
-      color:var(--muted);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+    /* Dark theme colors */
+    [data-theme="dark"] {
+      --primary: #4caf50;    
+      --accent: #66bb6a;      
+      --light: #121212;     
+      --card: #1e1e1e;        
+      --text: #e0e0e0;         
+      --muted: #a0a0a0;         
+      --border: #333333;        
+      --shadow: 0 6px 18px rgba(0,0,0,0.3);
     }
 
-    .wrap{
-      max-width:1100px;
-      margin:48px auto;
-      padding:28px;
+    * { 
+      box-sizing: border-box; 
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
 
-    header{
-      display:flex;
-      align-items:center;
-      gap:18px;
-      margin-bottom:24px;
+    body {
+      margin: 0;
+      font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: var(--light);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      max-width: var(--max-width);
+      margin: 12px auto;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
     }
 
     .brand {
-      display:flex;
-      align-items:center;
-      gap:12px;
+      font-family: "Poppins", sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      color: var(--primary);
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50px;
+      zoom: 1.2;
+      box-shadow: 0 2px 6px rgba(46,125,50,0.12);
+    }
+
+    .brand-text { 
+      font-size: 1.1rem; 
+      font-weight: 700; 
+      color: var(--primary); 
+    }
+
+    .tagline {
+      font-style: italic;
+      font-family: "Poppins", sans-serif;
+      font-size: 15px;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      margin-left: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a { 
+      text-decoration: none; 
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-links .btn { 
+      padding: 6px 12px; 
+      border-radius: 8px; 
+      background: var(--accent); 
+      color: white; 
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-links .btn:hover {
+      background: var(--primary);
+    }
+
+    /* Dark mode toggle */
+    .dark-toggle {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: var(--text);
+      transition: transform 0.3s ease;
+      padding: 4px;
+    }
+
+    .dark-toggle:hover {
+      transform: rotate(20deg);
+    }
+
+    /* Subscription Page Styles */
+    .wrap {
+      max-width: var(--max-width);
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 40px;
     }
 
     .logo {
-      width:52px;
-      height:52px;
-      display:inline-grid;
-      place-items:center;
-      background:linear-gradient(135deg, rgba(123,211,137,0.12), rgba(255,255,255,0.02));
-      border-radius:12px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.45), inset 0 -2px 6px rgba(0,0,0,0.25);
-      border:1px solid rgba(255,255,255,0.03);
+      width: 60px;
+      height: 60px;
+      display: inline-grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(46, 125, 50, 0.1), rgba(255,255,255,0.02));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
     }
 
-    h1{
-      font-size:20px;
-      margin:0;
-      color: #e7f7ed;
+    h1 {
+      font-size: 2rem;
+      margin: 0;
+      color: var(--primary);
+      font-weight: 700;
     }
 
-    p.lead{
-      margin:6px 0 0 0;
-      color: #cfeee0;
-      opacity:0.9;
-      font-size:14px;
+    p.lead {
+      margin: 8px 0 0 0;
+      color: var(--muted);
+      font-size: 1.1rem;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap:18px;
-      margin-top:28px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
     }
 
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:var(--radius);
-      padding:20px;
-      box-shadow: var(--card-shadow);
-      border: 1px solid rgba(255,255,255,0.03);
-      transition: transform .18s ease, box-shadow .18s ease;
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
     }
 
-    .card:hover{
-      transform: translateY(-6px);
-      box-shadow: 0 18px 42px rgba(2,18,12,0.7);
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
     }
 
-    .plan-title{
-      display:flex;
-      justify-content:space-between;
-      align-items:baseline;
-      gap:12px;
+    .plan-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .name {
-      font-weight:600;
-      font-size:16px;
-      color:#f0fff4;
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: var(--text);
     }
 
-    .price{
-      font-weight:700;
-      font-size:20px;
-      color:var(--accent);
-      background: linear-gradient(90deg, rgba(123,211,137,0.06), rgba(255,255,255,0.02));
-      padding:6px 10px;
-      border-radius:10px;
+    .price {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--accent);
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(255,255,255,0.02));
+      padding: 8px 12px;
+      border-radius: var(--radius);
     }
 
-    .badge{
-      display:inline-block;
-      background: rgba(123,211,137,0.12);
-      color:var(--accent);
-      padding:6px 10px;
-      font-weight:600;
-      border-radius:999px;
-      font-size:12px;
+    .badge {
+      display: inline-block;
+      background: rgba(76, 175, 80, 0.1);
+      color: var(--accent);
+      padding: 6px 12px;
+      font-weight: 600;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-left: 8px;
     }
 
-    .price-sub{
-      margin-top:8px;
-      color:#bfead0;
-      font-size:13px;
+    .price-sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
     }
 
-    ul.features{
-      margin:14px 0 18px 0;
-      padding-left:18px;
-      color:#dff7e8;
-      line-height:1.45;
-      font-size:14px;
+    ul.features {
+      margin: 20px 0;
+      padding-left: 0;
+      color: var(--text);
+      line-height: 1.6;
     }
 
-    ul.features li{
-      margin-bottom:8px;
-      position:relative;
-      padding-left:20px;
+    ul.features li {
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 24px;
+      list-style: none;
     }
 
-    ul.features li:before{
+    ul.features li:before {
       content: "✓";
-      position:absolute;
-      left:0;
-      top:0;
-      color:var(--accent);
-      font-weight:700;
-      font-size:13px;
-      line-height:1;
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1rem;
     }
 
-    .cta{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      margin-top:8px;
+    .cta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
     }
 
-    .subscribe-btn{
-      background: linear-gradient(90deg, #66c07b, #48a86a);
-      border:0;
-      color: #062a1e;
-      font-weight:700;
-      padding:10px 14px;
-      border-radius:10px;
-      cursor:pointer;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      box-shadow: 0 8px 20px rgba(58,123,74,0.18);
-      transition: transform .12s ease;
+    .subscribe-btn {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+      transition: all 0.3s ease;
     }
 
-    .subscribe-btn:active{ transform: translateY(1px); }
-    .subscribe-btn:focus{ outline:3px solid rgba(123,211,137,0.18); }
-
-    .muted-note{
-      font-size:13px;
-      color:#bde9cf;
-      opacity:0.85;
+    .subscribe-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
     }
 
-    .highlight{
-      border: 1px solid rgba(123,211,137,0.12);
-      background: linear-gradient(180deg, rgba(123,211,137,0.02), rgba(255,255,255,0.01));
+    .muted-note {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .highlight {
+      border: 2px solid var(--accent);
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.05), var(--card));
     }
 
     .best {
       transform: scale(1.02);
-      border: 1px solid rgba(123,211,137,0.16);
-      box-shadow: 0 22px 44px rgba(6,44,30,0.6);
     }
 
-    footer{
-      margin-top:30px;
-      color:#9bdcb4;
-      font-size:13px;
-      text-align:center;
-      opacity:0.95;
+    .best:hover {
+      transform: scale(1.02) translateY(-5px);
     }
 
-    @media (max-width:560px){
-      .brand { gap:10px; }
-      h1{ font-size:18px; }
+    footer {
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+      
+      .nav-links {
+        justify-content: center;
+      }
+      
+      .tagline {
+        display: none;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .cta {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      
+      .subscribe-btn {
+        text-align: center;
+        justify-content: center;
+      }
+      
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .wrap {
+        padding: 16px;
+      }
+      
+      .card {
+        padding: 20px;
+      }
+      
+      .plan-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand" aria-hidden="true">
-        <div class="logo" role="img" aria-label="GreenTrace logo">
-          <!-- simple leaf svg -->
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M3 21c0-6 12-10 18-18-6 6-12 18-18 18z" fill="#7bd389"/>
-            <path d="M9 3c4 4 10 5 12 6-1 0-6 1-12 6V3z" fill="#0b3a2b"/>
-          </svg>
-        </div>
-      </div>
-      <div>
-        <h1>GreenTrace — Subscriptions</h1>
-        <p class="lead">Grow impact, get perks — choose a plan and support tree planting + community competitions.</p>
-      </div>
-    </header>
+  <!-- Navigation -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-left">
+      <a class="brand" href="index.html" aria-label="GreenTrace home">
+        <img src="../frontend/images/image.png" alt="GreenTrace logo" class="logo-img" />
+        <span class="brand-text">GreenTrace</span>
+      </a>
+      <p class="tagline">Track and Celebrate Tree Planting</p>
+    </div>
 
+    <div class="nav-links">
+      <a href="landing.html">Home</a>
+      <a href="signup.html" class="btn">Sign Up</a>
+      
+      <!-- Dark mode toggle -->
+      <button id="darkModeToggle" class="dark-toggle" aria-pressed="false" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    
     <main>
       <section aria-labelledby="plans-heading">
         <h2 id="plans-heading" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">Subscription Plans</h2>
@@ -287,7 +471,7 @@
           <article class="card highlight best" role="region" aria-labelledby="plan-year">
             <div class="plan-title">
               <div>
-                <div id="plan-year" class="name">1 Year <span class="badge" style="margin-left:8px;">Best value</span></div>
+                <div id="plan-year" class="name">1 Year <span class="badge">Best value</span></div>
                 <div class="price-sub">Most popular — save more</div>
               </div>
               <div class="price">1000 Ksh</div>
@@ -333,70 +517,98 @@
         </div>
 
         <!-- Premium benefits full list -->
-        <section style="margin-top:22px;" aria-labelledby="benefits-heading">
-          <h3 id="benefits-heading" style="color:#eafff0; margin:0 0 10px 0;">What <em>Premium</em> gives you</h3>
-          <div class="card" style="padding:18px;">
-            <ul class="features" style="list-style:none; padding-left:0; color:#e6fbef;">
-              <li style="padding-left:0; margin-bottom:10px;">
+        <section style="margin-top:40px;" aria-labelledby="benefits-heading">
+          <h3 id="benefits-heading" style="color:var(--text); margin:0 0 16px 0; font-size:1.5rem;">What <em style="color:var(--accent);">Premium</em> gives you</h3>
+          <div class="card" style="padding:24px;">
+            <ul class="features" style="list-style:none; padding-left:0; color:var(--text);">
+              <li style="padding-left:0; margin-bottom:12px;">
                 <strong>Unlimited submissions per day</strong> — submit as many trees as you plant (virtual or real).
               </li>
-              <li style="padding-left:0; margin-bottom:10px;">
+              <li style="padding-left:0; margin-bottom:12px;">
                 <strong>Priority verification</strong> — faster verification of uploaded tree photos so your planting counts sooner.
               </li>
-              <li style="padding-left:0; margin-bottom:10px;">
+              <li style="padding-left:0; margin-bottom:12px;">
                 <strong>Advanced analytics</strong> — per-tree metrics, planting trends, and exportable reports for teams.
               </li>
-              <li style="padding-left:0; margin-bottom:10px;">
+              <li style="padding-left:0; margin-bottom:12px;">
                 <strong>Exclusive badges & leaderboards</strong> — premium-only badges and premium leaderboard tiers.
               </li>
-              <li style="padding-left:0; margin-bottom:10px;">
+              <li style="padding-left:0; margin-bottom:12px;">
                 <strong>Ad-free experience</strong> — cleaner interface and faster loading across the site.
               </li>
-              <li style="padding-left:0; margin-bottom:10px;">
+              <li style="padding-left:0; margin-bottom:12px;">
                 <strong>Partner discounts</strong> — reduced prices when buying saplings or planting services from our partner sellers.
               </li>
-              <li style="padding-left:0; margin-bottom:10px;">
+              <li style="padding-left:0; margin-bottom:12px;">
                 <strong>Premium competitions</strong> — access to invite-only challenges with exclusive prizes.
               </li>
-              <li style="padding-left:0; margin-bottom:10px;">
-                <strong>Team management</strong> — create/manage small teams, delegate verifiers, and track team progress (1 Year and 3 Years receive enhanced team tools).
+              <li style="padding-left:0; margin-bottom:12px;">
+                <strong>Team management</strong> — create/manage small teams, delegate verifiers, and track team progress.
               </li>
             </ul>
-            <p style="margin:0; color:#bfead0; font-size:13px;">
+            <p style="margin:20px 0 0 0; color:var(--muted); font-size:0.9rem;">
               All subscriptions auto-renew by default. You can cancel anytime in your account settings or by contacting support.
             </p>
           </div>
         </section>
-
       </section>
     </main>
 
     <footer>
-      <div>Need a custom or enterprise plan? Contact <a href="mailto:lagati1001@gmail.com" style="color:var(--accent); text-decoration:underline;">lagati1001@gmail.com</a></div>
+      <div>Need a custom or enterprise plan? Contact <a href="mailto:lagati1001@gmail.com">lagati1001@gmail.com</a></div>
       <div style="margin-top:8px;">Prices shown in Kenyan Shilling (Ksh).</div>
     </footer>
   </div>
 
+  <!-- Theme Toggle Script -->
   <script>
-    // Optional: enhance subscribe links to confirm and forward plan info to signup page.
-    (function(){
-      document.querySelectorAll('a.subscribe-btn').forEach(btn=>{
-        btn.addEventListener('click', function(e){
-          // If you want to do client-side tracking: extract plan & price from href query
-          // e.g., /signup.html?plan=year&price=1000
-          // We're not preventing default — allow navigation. This simply stores last chosen plan to sessionStorage for signup page to read.
+    document.addEventListener('DOMContentLoaded', function() {
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      
+      // Check for saved theme or prefered scheme
+      const currentTheme = localStorage.getItem('theme');
+      if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+        document.body.setAttribute('data-theme', 'dark');
+        darkModeToggle.textContent = '☀️';
+        darkModeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        document.body.setAttribute('data-theme', 'light');
+        darkModeToggle.textContent = '🌙';
+        darkModeToggle.setAttribute('aria-pressed', 'false');
+      }
+      
+      // Toggle theme when button is clicked
+      darkModeToggle.addEventListener('click', function() {
+        let theme = 'light';
+        if (document.body.getAttribute('data-theme') === 'light') {
+          theme = 'dark';
+          darkModeToggle.textContent = '☀️';
+          darkModeToggle.setAttribute('aria-pressed', 'true');
+        } else {
+          theme = 'light';
+          darkModeToggle.textContent = '🌙';
+          darkModeToggle.setAttribute('aria-pressed', 'false');
+        }
+        
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+      });
+
+      // Subscribe button tracking
+      document.querySelectorAll('a.subscribe-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
           try {
             const url = new URL(this.href, location.origin);
             const plan = url.searchParams.get('plan') || '';
             const price = url.searchParams.get('price') || '';
             sessionStorage.setItem('greentrace.selectedPlan', JSON.stringify({plan, price}));
-            // small UI feedback can be added here, but we keep it simple.
           } catch (err) {
             // ignore
           }
         });
       });
-    })();
+    });
   </script>
 </body>
 </html>

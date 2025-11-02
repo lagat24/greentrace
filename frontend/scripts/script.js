@@ -281,7 +281,7 @@ async function handleLogin(event) {
     if (result && result.token) {
       setUserInfo(result.user || { name: email.split('@')[0] }, result.token);
       showToast('Welcome back!');
-      window.location.href = 'index.html';
+      window.location.href = 'dashboard.html';
     } else {
       showToast(result?.message || 'Login failed');
     }
@@ -308,7 +308,7 @@ async function handleSignup(event) {
     if (result && result.token) {
       setUserInfo(result.user || { name: username }, result.token);
       showToast('Account created successfully!');
-      window.location.href = 'index.html';
+      window.location.href = 'dashboard.html';
     } else {
       showToast(result?.message || 'Signup failed');
     }
@@ -325,7 +325,7 @@ function logout() {
     localStorage.removeItem('userName');
     updateNavAuthArea();
     showToast('Logged out successfully');
-    window.location.href = 'index.html';
+    window.location.href = 'landing.html';
   }
 }
 
