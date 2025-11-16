@@ -2,11 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
+const subscriptionRoutes = require('./routes/subs');
+const callbackRoutes = require('./routes/callback');
+
 
 // Initialize Express
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/api/subscription', subscriptionRoutes);
+app.use('/api/mpesa', callbackRoutes);
+
 
 // Create MySQL connection pool (Aiven)
 const db = mysql.createPool({

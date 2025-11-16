@@ -29,11 +29,73 @@ router.post('/signup', async (req, res) => {
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '30d' });
 
     res.json({ token, user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+} catch (err) {
+  // Handle duplicate entry errors
+  if (err.code === 'ER_DUP_ENTRY') {
+    const field = determineDuplicateField(err);
+    const message = getDuplicateFieldMessage(field);
+    return res.status(409).json({ 
+      error: message,
+      field: field // Help frontend know which field had issue
+    });
   }
-});
+  
+  // Handle other common MySQL errors
+  if (err.code === 'ER_NO_REFERENCED_ROW') {
+    return res.status(400).json({ error: 'Referenced record not found' });
+  }
+  
+  if (err.code === 'ER_DATA_TOO_LONG') {
+    return res.status(400).json({ error: 'Data too long for one or more fields' });
+  }
+  
+  // Handle validation errors (if using a validation library)
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ 
+      error: 'Validation failed',
+      details: err.errors 
+    });
+  }
+  
+  // Log unexpected errors
+  console.error('Database error:', err);
+  
+  // Don't expose internal error details in production
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  return res.status(500).json({ 
+    error: 'Internal server error',
+    ...(isDevelopment && { detail: err.message })
+  });
+}
+
+// Helper functions
+function determineDuplicateField(err) {
+  if (!err.sqlMessage) return null;
+  
+  // More robust field detection
+  if (err.sqlMessage.includes('email') || err.sqlMessage.includes('user_email')) {
+    return 'email';
+  }
+  if (err.sqlMessage.includes('username') || err.sqlMessage.includes('user_name')) {
+    return 'username';
+  }
+  // Check for unique constraint names
+  if (err.sqlMessage.includes('unique_email')) return 'email';
+  if (err.sqlMessage.includes('unique_username')) return 'username';
+  
+  return null;
+}
+
+function getDuplicateFieldMessage(field) {
+  const messages = {
+    email: 'Email already registered',
+    username: 'Username already taken',
+  };
+  return messages[field] || 'Duplicate entry found';
+}
+
+  }
+);
 
 // Login
 router.post('/login', async (req, res) => {

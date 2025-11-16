@@ -10,14 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <!-- Consolidated CSS -->
-  <link rel="stylesheet" href="../frontend/styles/style.css" />
+  <link rel="stylesheet" href="./styles/style.css" />
 </head>
 <body>
   <!-- Navigation -->
   <nav class="nav" aria-label="Main navigation">
     <div class="nav-left">
       <a class="brand" href="index.html" aria-label="GreenTrace home">
-        <img src="../frontend/images/image.png" alt="GreenTrace logo" class="logo-img" />
+        <img src="./images/image.png" alt="GreenTrace logo" class="logo-img" />
         <span class="brand-text">GreenTrace</span>
       </a>
       <p class="tagline">Track and Celebrate Tree Planting</p>
@@ -62,9 +62,9 @@
 
             <div class="plan-cta">
               <div class="plan-note">Best for short-term testers</div>
-              <a class="subscribe-btn" href="signup.html?plan=monthly&price=100" aria-label="Subscribe to Monthly plan">
+              <button class="subscribe-btn" data-plan="monthly" data-price="100">
                 Subscribe
-              </a>
+              </button>
             </div>
           </article>
 
@@ -86,9 +86,9 @@
 
             <div class="plan-cta">
               <div class="plan-note">Good for seasonal campaigns</div>
-              <a class="subscribe-btn" href="signup.html?plan=3months&price=312" aria-label="Subscribe to 3 months plan">
+              <button class="subscribe-btn" data-plan="3months" data-price="312">
                 Subscribe
-              </a>
+              </button>
             </div>
           </article>
 
@@ -110,9 +110,9 @@
 
             <div class="plan-cta">
               <div class="plan-note">Great for committed planters</div>
-              <a class="subscribe-btn" href="signup.html?plan=year&price=1000" aria-label="Subscribe to 1 year plan">
+              <button class="subscribe-btn" data-plan="year" data-price="1000">
                 Subscribe
-              </a>
+              </button>
             </div>
           </article>
 
@@ -134,9 +134,9 @@
 
             <div class="plan-cta">
               <div class="plan-note">Ideal for organizations & teams</div>
-              <a class="subscribe-btn" href="signup.html?plan=3years&price=2500" aria-label="Subscribe to 3 years plan">
+              <button class="subscribe-btn" data-plan="3years" data-price="2500">
                 Subscribe
-              </a>
+              </button>
             </div>
           </article>
         </div>
@@ -185,10 +185,20 @@
     </footer>
   </div>
 
+  <!-- Modal for phone input -->
+  <div id="paymentModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Enter Your M-Pesa Number</h3>
+      <input id="modalPhoneInput" type="tel" placeholder="07XXXXXXXX" required />
+      <button id="confirmPaymentBtn" class="confirm-btn">Confirm Payment</button>
+      <button id="closeModalBtn" class="close-btn">Cancel</button>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden"></div>
 
   <!-- Unified JavaScript -->
-  <script src="../frontend/scripts/app.js"></script>
+  <script src="./scripts/app.js"></script>
 </body>
 </html>
