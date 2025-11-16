@@ -1,5 +1,5 @@
 const express = require("express");
-const { initiateStkPush } = require("../mpesa.js");
+const { initiateStkPush } = require("../subs.js");
 
 const router = express.Router();
 
