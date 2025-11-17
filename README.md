@@ -1,16 +1,19 @@
 # 🌱 GreenTrace – Tree Planting Competition Platform
-
-## 🌍 Project Overview  
 **GreenTrace** is an interactive web platform designed to promote tree planting through friendly competitions.  
 Users can sign up, plant virtual or real trees, upload pictures, and track their progress on a leaderboard — making environmental action fun, transparent, and rewarding.
+
+
+## 🌍 Project Overview 
+GreenTrace empowers individuals and communities to participate in sustainability efforts by tracking tree-planting activities digitally. Users can register, upload photos of planted trees, and view their progress on a dynamic dashboard and leaderboard. The system uses AI-based verification to ensure transparency and authenticity.
 
 ---
 
 ## 🚀 Features
 
 ### 🔐 User Signup & Authentication
-- Secure account creation and login.  
-- Personalized tracking of each user’s planting activity.
+- Secure account creation and login
+- Individual progress dashboards
+- Personalized user experience
 
 ### 🌳 Tree Upload & Picture Submission
 - Record each tree planted.  
@@ -28,8 +31,15 @@ Users can sign up, plant virtual or real trees, upload pictures, and track their
 
 ---
 
-## Ways we use AI
--GreenTrace uses artificial intelligence to verify tree planting by analyzing the photos users upload. The AI examines image details such as soil disturbance, leaf patterns, and background consistency to confirm authenticity. This ensures users genuinely plant trees, enhancing transparency, credibility, and trust within the GreenTrace sustainability community.
+## How We Use AI
+GreenTrace integrates computer vision to verify tree planting photos.
+The AI analyzes:
+- Soil disturbance
+- Leaf and plant patterns
+- Environmental consistency
+- Time and metadata indicators
+
+This ensures uploaded photos represent genuine environmental contributions, strengthening the platform’s trust, transparency, and impact.
 
 ___
 
@@ -53,8 +63,8 @@ ___
 
 ## 🌐 Links / Live Demo
 - **Live link (Netlify):** https://greentr.netlify.app/  
-- **Pitch deck (canva):** https://www.canva.com/design/DAG1qMMYZ5Y/P8ELJWTsX7YdwQPrFn_N2g/view?utm_content=DAG1qMMYZ5Y&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6b9e9e70d6
 - **Backend (render):** https://greentrace-t95w.onrender.com/
+- **Pitch deck (canva):** https://www.canva.com/design/DAG1qMMYZ5Y/P8ELJWTsX7YdwQPrFn_N2g/view?utm_content=DAG1qMMYZ5Y&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6b9e9e70d6
 ---
 
 ## 🧩 Summary
