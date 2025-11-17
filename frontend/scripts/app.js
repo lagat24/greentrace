@@ -332,6 +332,9 @@ function initMyTreesPage() {
     // Load Kenya locations
     loadKenyaLocations();
     
+    // Autofill planter name with user's signup name
+    autofillPlanterName();
+    
     // Load AI model
     loadAIModel();
     
@@ -347,11 +350,21 @@ async function loadKenyaLocations() {
     if (!locationSelect) return;
     
     try {
-        const res = await fetch("../frontend/location.json");
+        const res = await fetch("./location.json");
         kenyaLocations = await res.json();
         locationSelect.innerHTML = kenyaLocations.map(l => `<option value="${l.name}">${l.name}</option>`).join("");
     } catch {
         locationSelect.innerHTML = `<option value="Nairobi">Nairobi</option>`;
+    }
+}
+
+function autofillPlanterName() {
+    const planterNameInput = document.getElementById("planterName");
+    if (!planterNameInput) return;
+    
+    const userName = localStorage.getItem('userName');
+    if (userName) {
+        planterNameInput.value = userName;
     }
 }
 
@@ -386,6 +399,12 @@ function renderTree(tree) {
     const gallery = document.getElementById("treeGallery");
     if (!gallery) return;
     
+    const currentUser = localStorage.getItem('userName') || 'Unknown';
+    const isOwner = tree.uploadedBy === currentUser;
+    const deleteButtonHtml = isOwner 
+        ? `<button class="tree-delete-btn" data-id="${tree.id}"><i class="fas fa-trash"></i> Delete</button>`
+        : `<button class="tree-delete-btn" disabled title="Only the uploader can delete this tree"><i class="fas fa-trash"></i> Delete</button>`;
+    
     const card = document.createElement("div");
     card.className = "tree-card";
     card.innerHTML = `
@@ -395,12 +414,14 @@ function renderTree(tree) {
         <p>${escapeHtml(tree.location)}</p>
         <p class="${tree.verified ? "tree-verified" : "tree-not-verified"}">${tree.verified ? "✅ AI Verified" : "❌ Unverified"}</p>
         <div class="tree-confidence">${(tree.confidence * 100).toFixed(1)}% confidence</div>
-        <button class="tree-delete-btn" data-id="${tree.id}"><i class="fas fa-trash"></i> Delete</button>
+        ${deleteButtonHtml}
     `;
     gallery.appendChild(card);
     
-    // Add delete event listener
-    card.querySelector(".tree-delete-btn").addEventListener("click", () => deleteTree(tree.id));
+    // Add delete event listener only if owner
+    if (isOwner) {
+        card.querySelector(".tree-delete-btn").addEventListener("click", () => deleteTree(tree.id));
+    }
 }
 
 function updateMyTreesMap() {
@@ -486,7 +507,8 @@ async function handleTreeSubmission(event) {
                 image: imageBase64,
                 verified: true,
                 confidence: result.confidence,
-                plantedAt: new Date()
+                plantedAt: new Date(),
+                uploadedBy: localStorage.getItem('userName') || 'Unknown'
             };
             
             // Save to localStorage
@@ -514,9 +536,18 @@ async function handleTreeSubmission(event) {
 }
 
 function deleteTree(id) {
+    const trees = JSON.parse(localStorage.getItem("greentrace_trees")) || [];
+    const tree = trees.find(t => t.id === id);
+    const currentUser = localStorage.getItem('userName') || 'Unknown';
+    
+    // Check if current user is the uploader
+    if (tree && tree.uploadedBy !== currentUser) {
+        showToast("❌ You can only delete trees you uploaded", "error");
+        return;
+    }
+    
     if (!confirm("Are you sure you want to delete this tree?")) return;
     
-    const trees = JSON.parse(localStorage.getItem("greentrace_trees")) || [];
     const updatedTrees = trees.filter(t => t.id !== id);
     localStorage.setItem("greentrace_trees", JSON.stringify(updatedTrees));
     
@@ -628,6 +659,32 @@ function initLeaderboardPage() {
 }
 
 function loadLeaderboardData() {
+    // Try to fetch leaderboard from API first
+    apiFetch('/leaderboard')
+        .then(data => {
+            if (data && data.leaderboard) {
+                // Use API data
+                const sorted = data.leaderboard.map(user => ({
+                    name: user.name,
+                    count: user.trees_planted,
+                    verified: user.trees_planted,
+                    speciesCount: 0
+                }));
+                
+                updateLeaderboardStats(sorted.length, sorted.reduce((sum, u) => sum + u.count, 0), 0);
+                renderLeaderboard(sorted);
+            } else {
+                // Fallback to localStorage if API returns no data
+                loadLeaderboardDataLocal();
+            }
+        })
+        .catch(() => {
+            // Fallback to localStorage on API error
+            loadLeaderboardDataLocal();
+        });
+}
+
+function loadLeaderboardDataLocal() {
     // Get trees data from localStorage
     const trees = JSON.parse(localStorage.getItem("greentrace_trees")) || [];
 
