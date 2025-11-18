@@ -4,15 +4,12 @@
 function ensureLoggedIn() {
   const userId = localStorage.getItem("userId");
 
+  // If user is not logged in, just block the action — NO REDIRECT
   if (!userId) {
-    showToast("Please log in to subscribe.", true);
-
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 2500);
-
+    showToast("You must be logged in to subscribe.", true);
     return false;
   }
+
   return true;
 }
 
