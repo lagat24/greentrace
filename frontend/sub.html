@@ -25,11 +25,11 @@
 
     <div class="nav-links">
       <a href="index.html">Home</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="add-tree.html">My Trees</a>
-      <a href="leaderboard.html">Leaderboard</a>
       <a href="sub.html" style="color:var(--accent); font-weight:bold;">Subscription</a>
-      <a href="#" onclick="logout()">Logout</a>
+      <div id="nav-auth-area">
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Sign Up</a>
+      </div>
       <!-- Dark mode toggle -->
       <button id="darkModeToggle" class="dark-toggle" aria-pressed="false" aria-label="Toggle dark mode">🌙</button>
     </div>
@@ -200,6 +200,33 @@
 
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden"></div>
+
+  <!-- Update Navigation Based on Login Status -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const userName = localStorage.getItem('userName');
+      const navAuthArea = document.getElementById('nav-auth-area');
+      
+      if (token && userName) {
+        // User is logged in
+        navAuthArea.innerHTML = `
+          <span class="muted">Hello, <strong>${userName}</strong></span>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="add-tree.html">My Trees</a>
+          <a href="leaderboard.html">Leaderboard</a>
+          <a href="#" onclick="logout()" class="btn">Logout</a>
+        `;
+      }
+    });
+    
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('greentrace_user');
+      window.location.href = 'index.html';
+    }
+  </script>
 
   <!-- Unified JavaScript -->
   <script src="./scripts/subscription.js"></script>

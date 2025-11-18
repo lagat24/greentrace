@@ -1,19 +1,4 @@
 // ---------------------------
-// Check Login Status
-// ---------------------------
-function ensureLoggedIn() {
-  const userId = localStorage.getItem("userId");
-
-  // If user is not logged in, just block the action — NO REDIRECT
-  if (!userId) {
-    showToast("You must be logged in to subscribe.", true);
-    return false;
-  }
-
-  return true;
-}
-
-// ---------------------------
 // Dark Mode Toggle
 // ---------------------------
 const darkToggle = document.getElementById("darkModeToggle");
@@ -52,8 +37,6 @@ function showToast(message, isError = false) {
 // ---------------------------
 document.querySelectorAll(".subscribe-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    if (!ensureLoggedIn()) return;
-
     selectedPlan = btn.dataset.plan;
     selectedPrice = btn.dataset.price;
 
@@ -72,10 +55,8 @@ closeModalBtn.addEventListener("click", () => {
 // Confirm Payment
 // ---------------------------
 confirmBtn.addEventListener("click", async () => {
-  if (!ensureLoggedIn()) return;
-
   const phone = phoneInput.value.trim();
-  const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId") || `guest_${Date.now()}`;
 
   if (!/^07\d{8}$/.test(phone)) {
     return showToast("Enter a valid Safaricom number (07XXXXXXXX).", true);
